@@ -10,5 +10,7 @@
 
 #define rowHeight 80
 #define rowWidth 80
+#define topHeaderColor [UIColor yellowColor];
+#define leftHeaderColor [UIColor orangeColor];
 
 #endif /* Excel_h */

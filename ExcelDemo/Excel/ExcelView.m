@@ -12,9 +12,9 @@
 
 @interface ExcelView ()<UICollectionViewDataSource,UICollectionViewDelegate,UITableViewDelegate,UITableViewDataSource>
 
-@property(strong,nonatomic)UIView *topView;
-@property(strong,nonatomic)UICollectionView *topExcelCollectionView;
-@property(strong,nonatomic)UITableView *ExcelTableView;
+@property(strong,nonatomic) UIView *topHeaderView;
+@property(strong,nonatomic) UICollectionView *topExcelCollectionView;
+@property(strong,nonatomic) UITableView *excelTableView;
 @property (assign, nonatomic) CGPoint cacheContentOffset;
 
 @end
@@ -29,138 +29,134 @@
  }
  */
 
+- (UICollectionView *)topExcelCollectionView{
+    if(!_topExcelCollectionView){
+        UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc]init];
+        layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
+        CGFloat edge = 0.f;
+        layout.itemSize = CGSizeMake(rowWidth, rowHeight);
+        layout.minimumLineSpacing = edge;
+        layout.minimumInteritemSpacing = edge;
+        layout.sectionInset = UIEdgeInsetsMake(edge, edge, edge, edge);
+
+        _topExcelCollectionView = [[UICollectionView alloc]initWithFrame:CGRectZero collectionViewLayout:layout];
+        [_topExcelCollectionView registerClass:[ExcelCollectionCell class] forCellWithReuseIdentifier:@"cell"];
+        _topExcelCollectionView.backgroundColor = topHeaderColor;
+        _topExcelCollectionView.showsHorizontalScrollIndicator = NO;
+        _topExcelCollectionView.delegate = self;
+        _topExcelCollectionView.dataSource = self;
+    }
+    return _topExcelCollectionView;
+}
+
+- (UITableView *)excelTableView{
+    if(!_excelTableView){
+        _excelTableView = [[UITableView alloc]initWithFrame:CGRectZero style:UITableViewStylePlain];
+        _excelTableView.delegate = self;
+        _excelTableView.dataSource = self;
+        _excelTableView.backgroundColor = [UIColor whiteColor];
+        [self.excelTableView registerClass:[ExcelTableCell class] forCellReuseIdentifier:@"ExcelTableViewCell"];
+    }
+    return _excelTableView;
+}
+
 - (instancetype)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
     if (self) {
         
         self.layer.borderWidth = 0.5;
-        self.rowNumber = 5;
-        self.columnNumber = 5;
         
-        [self initTopView];
-        [self initTableView];
-        
-        
-        
+        [self initTopHeaderView];
+        [self initExcelTableView];
     }
     return self;
 }
 
 //顶部headerView
--(void)initTopView{
+-(void)initTopHeaderView{
     
-    self.topView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, self.frame.size.width, rowHeight)];
-    self.topView.backgroundColor = [UIColor cyanColor];
-    [self addSubview:self.topView];
+    self.topHeaderView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, self.frame.size.width, rowHeight)];
+    self.topHeaderView.backgroundColor = topHeaderColor;
+    [self addSubview:self.topHeaderView];
     
     UILabel *firstLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, rowWidth, rowHeight)];
     firstLabel.text = @"左上头";
     firstLabel.font = [UIFont systemFontOfSize:12.f];
     firstLabel.textAlignment = NSTextAlignmentCenter;
     firstLabel.layer.borderWidth = 0.5;
-    [self.topView addSubview:firstLabel];
+    [self.topHeaderView addSubview:firstLabel];
     
-    UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc]init];
-    layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
-    CGFloat edge = 0.f;
-    layout.itemSize = CGSizeMake(rowWidth, rowHeight);
-    layout.minimumLineSpacing = edge;
-    layout.minimumInteritemSpacing = edge;
-    layout.sectionInset = UIEdgeInsetsMake(edge, edge, edge, edge);
-    
-    //    layout.itemSize
-    _topExcelCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(rowWidth, 0, self.topView.frame.size.width - rowWidth, rowHeight) collectionViewLayout:layout];
-    [_topExcelCollectionView registerClass:[ExcelCollectionCell class] forCellWithReuseIdentifier:@"cell"];
-    _topExcelCollectionView.backgroundColor = [UIColor orangeColor];
-    _topExcelCollectionView.showsHorizontalScrollIndicator = NO;
-    _topExcelCollectionView.delegate = self;
-    _topExcelCollectionView.dataSource = self;
-    [self addSubview:_topExcelCollectionView];
-    
-    
-    
+    self.topExcelCollectionView.frame = CGRectMake(rowWidth, 0, self.topHeaderView.frame.size.width - rowWidth, rowHeight);
+    [self.topHeaderView addSubview:self.topExcelCollectionView];
+
 }
 
-- (__kindof UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath{
-    
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath{
     ExcelCollectionCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"cell" forIndexPath:indexPath];
     cell.layer.borderWidth = 0.5;
     cell.backgroundColor = [UIColor clearColor];
-    //顶部类型（可以根据index.row去dataSource数据修改值）
-    cell.excelLabel.text = [NSString stringWithFormat:@"顶部类型%ld",indexPath.row];
+    cell.excelLabel.text = [NSString stringWithFormat:@"顶部列-%ld",indexPath.row];
     return cell;
     
 }
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section{
-    return self.columnNumber;
+    return [self.delegate excelNumberOfColumns];
 }
 
--(void)initTableView{
-    
-    self.ExcelTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, rowHeight, self.frame.size.width, self.frame.size.height) style:UITableViewStylePlain];
-    self.ExcelTableView.delegate = self;
-    self.ExcelTableView.dataSource = self;
-    self.ExcelTableView.backgroundColor = [UIColor redColor];
-    [self.ExcelTableView registerClass:[ExcelTableCell class] forCellReuseIdentifier:@"ExcelTableViewCell"];
-    [self addSubview:self.ExcelTableView];
-    
+-(void)initExcelTableView{
+    self.excelTableView.frame = CGRectMake(0, rowHeight, self.frame.size.width, self.frame.size.height);
+    [self addSubview:self.excelTableView];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return self.rowNumber;
+    return [self.delegate excelNumberOfRows];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-    
-    ExcelTableCell *cell = [tableView dequeueReusableCellWithIdentifier:@"ExcelTableViewCell"];
-    if (cell == nil){
-        cell = [[ExcelTableCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"ExcelTableViewCell"];
-    }
-    cell.columnNumber = self.columnNumber;
+    static NSString *cellIndetifier = @"ExcelTableViewCell";
+   
+    ExcelTableCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIndetifier forIndexPath:indexPath];
+    cell.columnNumber = [self.delegate excelNumberOfColumns];
     cell.row = indexPath.row;
-    cell.innerExcelCollectionView.delegate = self;
-    cell.innerExcelCollectionView.delegate = self;
+    if([self.delegate excelDataSource].count > indexPath.row){
+        NSMutableArray *rowData = [[self.delegate excelDataSource] objectAtIndex:indexPath.row];
+        cell.rowData = rowData;
+    }
+    cell.excelRowCollectionView.delegate = self;
     
     return cell;
-    
-    
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    
     return rowHeight;
 }
-
 
 - (void)scrollViewDidScroll:(UIScrollView*)scrollView
 {
     if ([scrollView isKindOfClass:[UICollectionView class]]) {
         if (scrollView.contentOffset.y != 0) {
             scrollView.contentOffset = CGPointMake(scrollView.contentOffset.x, 0);
-            return;
         }
         NSLog(@"scroll %f",scrollView.contentOffset.x);
         
         self.topExcelCollectionView.contentOffset = scrollView.contentOffset;
         
-        for (ExcelTableCell* cell in self.ExcelTableView.visibleCells) {
+        for (ExcelTableCell* cell in self.excelTableView.visibleCells) {
             for (UIView *view in cell.contentView.subviews) {
                 if ([view isKindOfClass:[UICollectionView class]]) {
-                    
                     UICollectionView *collectionView = (UICollectionView *)view;
                     collectionView.contentOffset = scrollView.contentOffset;
                     self.cacheContentOffset = CGPointMake(scrollView.contentOffset.x, scrollView.contentOffset.y);
                 }
             }
-            
         }
         
     }else{
         self.topExcelCollectionView.contentOffset = self.cacheContentOffset;
         
-        for (ExcelTableCell* cell in self.ExcelTableView.visibleCells) {
+        for (ExcelTableCell* cell in self.excelTableView.visibleCells) {
             for (UIView *view in cell.contentView.subviews) {
                 if ([view isKindOfClass:[UICollectionView class]]) {
                     UICollectionView *collectionView = (UICollectionView *)view;
@@ -170,23 +166,6 @@
             
         }
     }
-    
-    
-    
-}
-
--(void)setRowNumber:(NSInteger)rowNumber{
-    
-    _rowNumber = rowNumber;
-    [self.ExcelTableView reloadData];
-    
-}
-
--(void)setColumnNumber:(NSInteger)columnNumber{
-    
-    _columnNumber =columnNumber;
-    [self.topExcelCollectionView reloadData];
-    [self.ExcelTableView reloadData];
     
 }
 

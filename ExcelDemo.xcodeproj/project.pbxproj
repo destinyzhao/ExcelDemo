@@ -19,6 +19,7 @@
 		DEDA9ADA265F262400D0B772 /* ExcelView.m in Sources */ = {isa = PBXBuildFile; fileRef = DEDA9AD9265F262400D0B772 /* ExcelView.m */; };
 		DEDA9ADF265F276600D0B772 /* ExcelTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = DEDA9ADE265F276600D0B772 /* ExcelTableCell.m */; };
 		DEDA9AE2265F27BC00D0B772 /* ExcelCollectionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = DEDA9AE1265F27BC00D0B772 /* ExcelCollectionCell.m */; };
+		DEDA9AE6265F82E600D0B772 /* ExcelModel.m in Sources */ = {isa = PBXBuildFile; fileRef = DEDA9AE5265F82E600D0B772 /* ExcelModel.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,6 +65,8 @@
 		DEDA9ADE265F276600D0B772 /* ExcelTableCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExcelTableCell.m; sourceTree = "<group>"; };
 		DEDA9AE0265F27BC00D0B772 /* ExcelCollectionCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExcelCollectionCell.h; sourceTree = "<group>"; };
 		DEDA9AE1265F27BC00D0B772 /* ExcelCollectionCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExcelCollectionCell.m; sourceTree = "<group>"; };
+		DEDA9AE4265F82E600D0B772 /* ExcelModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExcelModel.h; sourceTree = "<group>"; };
+		DEDA9AE5265F82E600D0B772 /* ExcelModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExcelModel.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,6 +117,7 @@
 		DEDA9AA1265F25BF00D0B772 /* ExcelDemo */ = {
 			isa = PBXGroup;
 			children = (
+				DEDA9AE3265F82C800D0B772 /* Model */,
 				DEDA9AD7265F260F00D0B772 /* Excel */,
 				DEDA9AA2265F25BF00D0B772 /* AppDelegate.h */,
 				DEDA9AA3265F25BF00D0B772 /* AppDelegate.m */,
@@ -160,6 +164,15 @@
 				DEDA9AE1265F27BC00D0B772 /* ExcelCollectionCell.m */,
 			);
 			path = Excel;
+			sourceTree = "<group>";
+		};
+		DEDA9AE3265F82C800D0B772 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				DEDA9AE4265F82E600D0B772 /* ExcelModel.h */,
+				DEDA9AE5265F82E600D0B772 /* ExcelModel.m */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -292,6 +305,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DEDA9ADF265F276600D0B772 /* ExcelTableCell.m in Sources */,
+				DEDA9AE6265F82E600D0B772 /* ExcelModel.m in Sources */,
 				DEDA9AAA265F25BF00D0B772 /* ViewController.m in Sources */,
 				DEDA9AA4265F25BF00D0B772 /* AppDelegate.m in Sources */,
 				DEDA9ADA265F262400D0B772 /* ExcelView.m in Sources */,

@@ -9,11 +9,20 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+// 协议定义
+@protocol ExcelViewDelegate <NSObject>
+
+@required
+- (NSInteger)excelNumberOfRows;
+- (NSInteger)excelNumberOfColumns;
+- (NSMutableArray *)excelDataSource;
+
+@end
+
 @interface ExcelView : UIView
 
-@property(nonatomic,assign)NSInteger rowNumber;//行数
-@property(nonatomic,assign)NSInteger columnNumber;//列数
-@property(nonatomic,strong)NSDictionary *dataSource;//数据源（具体使用根据你的数据结构来）
+@property(nonatomic,strong) NSDictionary *dataSource;//数据源（具体使用根据你的数据结构来）
+@property (nonatomic,weak)  id<ExcelViewDelegate> delegate; ;
 
 @end
 
